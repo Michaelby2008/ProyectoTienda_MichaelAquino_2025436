@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión - ProyectoTienda</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+
+    <style>
+        :root {
+            --bg-body: #0b0f1a;
+            --bg-card: #1e293b;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --error-bg: rgba(239, 68, 68, 0.1);
+            --error-text: #ef4444;
+            --success-bg: rgba(34, 197, 94, 0.1);
+            --success-text: #22c55e;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        .tarjeta {
+            background-color: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            border: 1px solid #334155;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Línea decorativa superior */
+        .tarjeta::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: var(--accent);
+        }
+
+        .titulo {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .subtitulo {
+            margin-bottom: 2rem;
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+
+        /* Mensajes de feedback (Thymeleaf) */
+        .mensaje {
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .error {
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            border: 1px solid var(--error-text);
+        }
+
+        .success {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid var(--success-text);
+        }
+
+        /* Formulario */
+        .campo {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .campo label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .campo input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background-color: #0f172a;
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        .campo input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+
+        .boton {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: var(--accent);
+            color: #0b0f1a;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 0.5rem;
+        }
+
+        .boton:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .boton:active {
+            transform: translateY(0);
+        }
+
+        /* Link de registro */
+        .registro-link {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .registro-link a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .registro-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <div class="tarjeta">
+        <h2 class="titulo">Iniciar sesión</h2>
+        <p class="subtitulo">Ingrese sus credenciales para continuar</p>
+
+        <div th:if="${param.error}" class="mensaje error">
+            Usuario o contraseña incorrectos
+        </div>
+
+        <div th:if="${param.logout}" class="mensaje success">
+            Sesión cerrada correctamente
+        </div>
+
+        <div th:if="${param.registered}" class="mensaje success">
+            ¡Cuenta creada! Ya puedes entrar.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="campo">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" name="username" placeholder="Tu usuario" required>
+            </div>
+
+            <div class="campo">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="boton">Ingresar</button>
+        </form>
+
+        <div class="registro-link">
+            <a th:href="@{/register}">¿No tienes cuenta? Registrate aquí</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
