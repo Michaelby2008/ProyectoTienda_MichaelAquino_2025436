@@ -3,96 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - ProyectoTienda</title>
-    <link rel="stylesheet" th:href="@{/css/home.css}">
-
+    <title>Inicio - ProyectoTienda</title>
     <style>
         :root {
-            --primary: #0f172a;
-            --secondary: #1e293b;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
             --accent: #38bdf8;
-            --text-light: #f1f5f9;
-            --text-dim: #94a3b8;
+            --accent-hover: #0ea5e9;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
             --danger: #ef4444;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.3s ease;
         }
 
         body {
             margin: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: #0b0f1a;
-            color: var(--text-light);
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
         }
 
-        /* --- Sidenav Estilizado --- */
+        /* --- Sidenav --- */
         .sidenav {
             height: 100%;
-            width: 0;
+            width: 250px;
             position: fixed;
             z-index: 1000;
             top: 0;
             left: 0;
-            background-color: var(--secondary);
-            overflow-x: hidden;
+            background-color: var(--bg-secondary);
             transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            padding-top: 60px;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
         }
 
         .sidebar-header {
-            padding: 2rem 1.5rem;
-            text-align: center;
+            padding: 0 32px 20px;
             border-bottom: 1px solid #334155;
         }
 
         .sidebar-header h3 {
-            margin: 0;
-            font-size: 1.2rem;
             color: var(--accent);
+            font-size: 1.1rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
 
         .sidenav a {
-            padding: 1rem 2rem;
+            padding: 12px 32px;
             text-decoration: none;
             font-size: 1rem;
-            color: var(--text-dim);
+            color: var(--text-muted);
             display: block;
             transition: var(--transition);
-            border-left: 3px solid transparent;
         }
 
-        .sidenav a:hover {
-            color: var(--accent);
-            background: rgba(56, 189, 248, 0.1);
-            border-left: 3px solid var(--accent);
+        .sidenav a:hover, .sidenav a.active {
+            color: var(--text-main);
+            background-color: #334155;
+            border-left: 4px solid var(--accent);
         }
 
-        .sidenav .closebtn {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 30px;
-            color: var(--text-dim);
-        }
-
-        /* --- Sidebar Footer & Logout --- */
         .sidebar-footer {
-            margin-top: auto;
-            padding: 2rem 1.5rem;
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
 
         .logout-link {
-            width: 100%;
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
+            background: transparent;
             border: 1px solid var(--danger);
-            padding: 0.8rem;
-            border-radius: 8px;
+            color: var(--danger);
+            padding: 10px;
+            width: 100%;
             cursor: pointer;
-            font-weight: 600;
+            border-radius: 6px;
+            font-weight: bold;
             transition: var(--transition);
         }
 
@@ -101,74 +89,43 @@
             color: white;
         }
 
-        /* --- Main Content --- */
+        /* --- Main Layout --- */
         #main {
-            transition: margin-left .5s;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            margin-left: 250px;
+            padding: 20px;
         }
 
         .top-bar {
-            background: var(--secondary);
-            padding: 1rem 2rem;
+            background-color: var(--bg-secondary);
+            padding: 15px 30px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
         }
 
-        .open-btn {
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: 500;
+        .top-bar h1 {
+            font-size: 1.2rem;
+            margin: 0;
             color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .user-info {
-            background: #334155;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-
-        .content-area {
-            padding: 3rem 2rem;
-            max-width: 900px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .card {
-            background: var(--secondary);
-            padding: 2.5rem;
-            border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        .welcome-card {
+            background: var(--bg-secondary);
+            padding: 40px;
+            border-radius: 12px;
             border: 1px solid #334155;
-            position: relative;
-            overflow: hidden;
+            text-align: center;
         }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 4px;
-            background: var(--accent);
+        .welcome-card h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
         }
 
-        .card h2 {
-            margin-top: 0;
-            font-size: 1.8rem;
-            color: var(--text-light);
-        }
-
-        .card p {
-            color: var(--text-dim);
-            line-height: 1.6;
+        .welcome-card p {
+            color: var(--text-muted);
             font-size: 1.1rem;
         }
     </style>
@@ -176,12 +133,15 @@
 <body>
 
 <div id="mySidenav" class="sidenav">
-    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <div class="sidebar-header">
         <h3>Admin Panel</h3>
     </div>
-    <a th:href="@{/usuarios}"><i class="icon"></i> Usuarios</a>
-    <a href="#"><i class="icon"></i> Proximamente mas entidades</a>
+
+    <a th:href="@{/home}" class="active">Inicio</a>
+    <a th:href="@{/usuarios}">Usuarios</a>
+    <a th:href="@{/categorias}">Categorías</a>
+    <a th:href="@{/productos}">Productos</a>
+    <a th:href="@{/pedidos}">Pedidos</a>
 
     <div class="sidebar-footer">
         <form th:action="@{/logout}" method="post">
@@ -192,29 +152,16 @@
 
 <div id="main">
     <header class="top-bar">
-        <span class="open-btn" onclick="openNav()">&#9776; Menú</span>
-        <div class="user-info">
-            <span>Bienvenido, <strong>Usuario</strong></span>
-        </div>
+        <h1>Sistema de Gestión - ProyectoTienda</h1>
     </header>
 
     <main class="content-area">
-        <div class="card">
-            <h2>Gestión de Usuarios</h2>
-            <p>Usa el menú lateral para navegar entre las distintas secciones de la tienda. Desde aquí podrás administrar roles, permisos y datos generales.</p>
+        <div class="welcome-card">
+            <h2>Bienvenido al Panel de Control</h2>
+            <p>Utiliza el menú de la izquierda para gestionar las diferentes entidades de la base de datos.</p>
         </div>
     </main>
 </div>
 
-<script th:src="@{/js/main.js}"></script>
-<script>
-    function openNav() {
-        document.getElementById("mySidenav").style.width = "280px";
-    }
-
-    function closeNav() {
-        document.getElementById("mySidenav").style.width = "0";
-    }
-</script>
 </body>
 </html>

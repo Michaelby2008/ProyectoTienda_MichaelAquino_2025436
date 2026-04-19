@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Productos - ProyectoTienda</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --text: #f8fafc; --danger: #ef4444; --warning: #f59e0b; }
+        body { margin: 0; font-family: sans-serif; background-color: var(--bg); color: var(--text); }
+        .sidenav { height: 100%; width: 250px; position: fixed; background: var(--card); padding-top: 60px; }
+        .sidenav a { padding: 12px 32px; text-decoration: none; color: #94a3b8; display: block; }
+        .sidenav a.active { color: white; background: #334155; border-left: 4px solid var(--accent); }
+        #main { margin-left: 250px; padding: 20px; }
+        .excel-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: var(--card); }
+        .excel-table th, .excel-table td { padding: 12px; border-bottom: 1px solid #334155; text-align: left; }
+        .btn { padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; text-decoration: none; display: inline-block; }
+        .btn-add { background: var(--accent); color: var(--bg); }
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
+        .modal-content { background: white; color: #1e293b; margin: 5% auto; padding: 30px; width: 350px; border-radius: 12px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+<div class="sidenav">
+    <a th:href="@{/home}">Inicio</a>
+    <a th:href="@{/usuarios}">Usuarios</a>
+    <a th:href="@{/categorias}">Categorías</a>
+    <a th:href="@{/productos}" class="active">Productos</a>
+    <a th:href="@{/pedidos}">Pedidos</a>
+</div>
+
+<div id="main">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Gestión de Productos</h1>
+        <button class="btn btn-add" onclick="nuevoProducto()">Nuevo Producto</button>
+    </div>
+
+    <table class="excel-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Categoría</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${listaProductos}">
+            <td th:text="${p.idProducto}"></td>
+            <td th:text="${p.nombreProducto}"></td>
+            <td th:text="${p.precioProducto}"></td>
+            <td th:text="${p.stock}"></td>
+            <td th:text="${p.categoria != null ? p.categoria.nombreCategoria : 'Sin Categoría'}"></td>
+            <td>
+                <button class="btn" style="background: var(--warning); color: white;"
+                        th:onclick="editarProducto([[${p.idProducto}]], [[${p.nombreProducto}]], [[${p.precioProducto}]], [[${p.stock}]], [[${p.categoria?.idCategoria}]])">Editar</button>
+                <a th:href="@{/productos/eliminar/{id}(id=${p.idProducto})}" class="btn"
+                   style="background: var(--danger); color: white;" onclick="return confirm('¿Eliminar?')">Borrar</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle">Gestionar Producto</h3>
+        <form th:action="@{/productos/guardar}" method="post">
+            <input type="hidden" id="idProducto" name="idProducto">
+            <div class="form-group">
+                <label>Nombre:</label>
+                <input type="text" id="nombreProducto" name="nombreProducto" required>
+            </div>
+            <div class="form-group">
+                <label>Precio:</label>
+                <input type="number" step="0.01" id="precioProducto" name="precioProducto" required>
+            </div>
+            <div class="form-group">
+                <label>Stock:</label>
+                <input type="number" id="stock" name="stock" required>
+            </div>
+            <div class="form-group">
+                <label>Categoría:</label>
+                <select id="idCat" name="categoria.idCategoria" required>
+                    <option th:each="c : ${listaCategorias}" th:value="${c.idCategoria}" th:text="${c.nombreCategoria}"></option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-add" style="width: 100%;">Guardar</button>
+            <button type="button" onclick="document.getElementById('modal').style.display='none'" style="width:100%; margin-top:10px;">Cancelar</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function nuevoProducto() {
+        document.getElementById('modal').style.display = 'block';
+        document.getElementById('idProducto').value = "";
+        document.getElementById('nombreProducto').value = "";
+        document.getElementById('precioProducto').value = "";
+        document.getElementById('stock').value = "";
+    }
+    function editarProducto(id, nombre, precio, stock, idCat) {
+        document.getElementById('modal').style.display = 'block';
+        document.getElementById('idProducto').value = id;
+        document.getElementById('nombreProducto').value = nombre;
+        document.getElementById('precioProducto').value = precio;
+        document.getElementById('stock').value = stock;
+        document.getElementById('idCat').value = idCat;
+    }
+</script>
+</body>
+</html>

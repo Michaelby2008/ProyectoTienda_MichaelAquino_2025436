@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Pedidos - ProyectoTienda</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+        }
+
+        .sidenav {
+            height: 100%; width: 250px; position: fixed; z-index: 1000; top: 0; left: 0;
+            background-color: var(--bg-secondary); padding-top: 60px; box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidenav a {
+            padding: 12px 32px; text-decoration: none; font-size: 1rem; color: var(--text-muted);
+            display: block; transition: var(--transition);
+        }
+
+        .sidenav a:hover, .sidenav a.active {
+            color: var(--text-main); background-color: #334155; border-left: 4px solid var(--accent);
+        }
+
+        #main { margin-left: 250px; padding: 20px; }
+
+        .card { background: var(--bg-secondary); border-radius: 12px; padding: 20px; border: 1px solid #334155; }
+
+        .excel-table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 20px; }
+        .excel-table th { color: var(--accent); padding: 12px; border-bottom: 2px solid #334155; font-size: 0.85rem; }
+        .excel-table td { padding: 12px; border-bottom: 1px solid #334155; }
+
+        .btn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: var(--transition); text-decoration: none; display: inline-block; }
+        .btn-add { background: var(--accent); color: var(--bg-primary); }
+
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
+        .modal-content { background: white; color: #1e293b; margin: 5% auto; padding: 30px; width: 90%; max-width: 400px; border-radius: 12px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #475569; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+<div class="sidenav">
+    <div style="padding: 0 32px 20px; border-bottom: 1px solid #334155;">
+        <h3 style="color: var(--accent); font-size: 1.1rem;">Admin Panel</h3>
+    </div>
+    <a th:href="@{/home}">Inicio</a>
+    <a th:href="@{/usuarios}">Usuarios</a>
+    <a th:href="@{/categorias}">Categorías</a>
+    <a th:href="@{/productos}">Productos</a>
+    <a th:href="@{/pedidos}" class="active">Pedidos</a>
+    <a th:href="@{/detalles}">Detalles de Pedidos</a>
+</div>
+
+<div id="main">
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Registro de Pedidos</h2>
+            <button class="btn btn-add" onclick="nuevoPedido()">Nuevo Pedido</button>
+        </div>
+
+        <table class="excel-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Usuario</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${listaPedidos}">
+                <td th:text="${p.idPedido}"></td>
+                <td th:text="${p.fechaPedido}"></td>
+                <td th:text="'Q' + ${p.totalPedido}"></td>
+                <td th:text="${p.usuario.nombreUsu}"></td>
+                <td>
+                    <button class="btn" style="background: var(--warning); color: white;"
+                            th:onclick="editarPedido([[${p.idPedido}]], [[${p.fechaPedido}]], [[${p.totalPedido}]], [[${p.usuario.idUsuario}]])">
+                        Editar
+                    </button>
+                    <a th:href="@{/pedidos/eliminar/{id}(id=${p.idPedido})}"
+                       class="btn" style="background: var(--danger); color: white;"
+                       onclick="return confirm('¿Estás seguro de eliminar este pedido?')">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle" style="margin-top: 0;">Registrar Pedido</h3>
+        <form th:action="@{/pedidos/guardar}" method="post">
+            <input type="hidden" id="idPedido" name="idPedido">
+
+            <div class="form-group">
+                <label>Fecha del Pedido:</label>
+                <input type="date" id="fechaPed" name="fechaPedido" required>
+            </div>
+
+            <div class="form-group">
+                <label>Total:</label>
+                <input type="number" step="0.01" id="totalPed" name="totalPedido" required>
+            </div>
+
+            <div class="form-group">
+                <label>Usuario / Cliente:</label>
+                <select id="idUsu" name="usuario.idUsuario" required>
+                    <option value="">Seleccione un usuario</option>
+                    <option th:each="u : ${listaUsuarios}"
+                            th:value="${u.idUsuario}"
+                            th:text="${u.nombreUsu}"></option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn btn-add" style="flex: 1;">Guardar</button>
+                <button type="button" class="btn" style="background: #e2e8f0; flex: 1; color: #1e293b;"
+                        onclick="document.getElementById('modal').style.display='none'">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function nuevoPedido() {
+        document.getElementById('modal').style.display = 'block';
+        document.getElementById('modalTitle').innerText = "Nuevo Pedido";
+        document.getElementById('idPedido').value = "";
+        document.getElementById('fechaPed').value = "";
+        document.getElementById('totalPed').value = "";
+        document.getElementById('idUsu').value = "";
+    }
+
+    function editarPedido(id, fecha, total, idUsu) {
+        document.getElementById('modal').style.display = 'block';
+        document.getElementById('modalTitle').innerText = "Editar Pedido";
+        document.getElementById('idPedido').value = id;
+        document.getElementById('fechaPed').value = fecha;
+        document.getElementById('totalPed').value = total;
+        document.getElementById('idUsu').value = idUsu;
+    }
+</script>
+
+</body>
+</html>

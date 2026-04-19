@@ -74,8 +74,10 @@
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <div class="sidebar-header"><h3>Admin Panel</h3></div>
     <a th:href="@{/home}">Inicio</a>
-    <a th:href="@{/usuarios}" class="active">Usuarios</a>
-    <a href="#">Productos</a>
+    <a th:href="@{/usuarios}">Usuarios</a>
+    <a th:href="@{/categorias}" class="active">Categorías</a>
+    <a th:href="@{/productos}">Productos</a>
+    <a th:href="@{/pedidos}">Pedidos</a>
     <div class="sidebar-footer">
         <form th:action="@{/logout}" method="post">
             <button type="submit" class="logout-link">Cerrar Sesión</button>
